@@ -18,15 +18,15 @@ class local-openstack {
     pin               => '-10',
     include_src       => true
   } 
-  apt::source { 'folsom_trunk_testing':
-    location          => 'http://ppa.launchpad.net/openstack-ubuntu-testing/folsom-trunk-testing/ubuntu',
-    release           => 'precise',
-    repos             => 'main',
-    key               => '3B6F61A6',
-    key_server        => 'subkeys.pgp.net',
-    pin               => '-10',
-    include_src       => true
-  } 
+# apt::source { 'folsom_trunk_testing':
+#   location          => 'http://ppa.launchpad.net/openstack-ubuntu-testing/folsom-trunk-testing/ubuntu',
+#   release           => 'precise',
+#   repos             => 'main',
+#   key               => '3B6F61A6',
+#   key_server        => 'subkeys.pgp.net',
+#   pin               => '-10',
+#   include_src       => true
+# } 
   package { 'apache2':
     ensure               => 'latest',
   } 
