@@ -1,14 +1,14 @@
 class local-openstack {
 
+  File['/etc/apt/sources.list'] ->
+  Exec['apt-get update'] ->
   Package['python-software-properties'] ->
   Package['git'] ->
   Package['lynx'] ->
   Package['ubuntu-cloud-keyring'] ->
-  File['/etc/apt/sources.list'] ->
-  Exec['apt-get update'] ->
-  File['/etc/apache2/'] ~>
-  File['/etc/apache2/mods-available/'] ~>
-  File['/etc/apache2/mods-available/wsgi.conf'] ~>
+  File['/etc/apache2/'] ->
+  File['/etc/apache2/mods-available/'] ->
+  File['/etc/apache2/mods-available/wsgi.conf'] ->
   Package['apache2'] ->
   Service['apache2']   -> 
   Class['openstack::all']
@@ -65,7 +65,7 @@ class local-openstack {
   class { 'openstack::all':
     public_address       => '10.0.2.15',
     public_interface     => 'eth0',
-    private_interface    => 'br100',
+    private_interface    => 'eth1',
     admin_email          => 'some_admin@some_company',
     admin_password       => 'admin_password',
     nova_db_password     => 'password',
@@ -82,6 +82,14 @@ class local-openstack {
 #   libvirt_type         => 'kvm',
     libvirt_type         => 'qemu',
     fixed_range          => '192.168.100.0/24',
+    purge_nova_config    => false,
+  }
+  class { 'openstack::auth_file':
+    admin_user           => 'admin',
+    admin_tenant         => 'admin',
+    controller_node      => '127.0.0.1',
+    admin_password       => 'admin_password',
+    keystone_admin_token => 'keystone_admin_token',
   }
 }
 
