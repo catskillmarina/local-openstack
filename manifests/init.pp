@@ -82,6 +82,7 @@ class local-openstack {
 #   libvirt_type         => 'kvm',
     libvirt_type         => 'qemu',
     fixed_range          => '192.168.100.0/24',
+#   multi_host           => true,
     purge_nova_config    => false,
   }
   class { 'openstack::auth_file':
@@ -90,6 +91,37 @@ class local-openstack {
     controller_node      => '127.0.0.1',
     admin_password       => 'admin_password',
     keystone_admin_token => 'keystone_admin_token',
+  }
+  file { '/usr/local/admin':
+    ensure               => 'directory',
+    mode                 => '0755',
+  }
+  file { '/usr/local/admin/bin':
+    ensure               => 'directory',
+    mode                 => '0755',
+    subscribe            => File['/usr/local/admin'],
+  }
+  file { '/usr/local/admin/bin/glance_add_image.sh':
+    ensure               => 'file',
+    mode                 => '0755',
+    subscribe            => File['/usr/local/admin/bin'],
+    content              => '#!/bin/sh
+
+url=$1
+diskname=$2
+format=$3
+container_format=$4
+
+source /root/openrc
+
+wget -c ${url} -O /var/spool/stackimages/${diskname}
+glance add name=${diskname} disk_format=${format} container_format=${container_format} < /var/spool/stackimages/${diskname}
+
+'
+  }
+  file { '/var/spool/stackimages':
+    ensure               => 'directory',
+    mode                 => '0755',
   }
 }
 
