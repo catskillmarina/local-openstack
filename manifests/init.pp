@@ -105,31 +105,13 @@ class local-openstack {
     ensure               => 'file',
     mode                 => '0755',
     subscribe            => File['/usr/local/admin/bin'],
-    content              => '#!/bin/sh
-
-url=$1
-diskname=$2
-format=$3
-container_format=$4
-
-. /root/openrc
-
-wget -c ${url} -O /var/spool/stackimages/${diskname}
-glance add name=${diskname} disk_format=${format} container_format=${container_format} < /var/spool/stackimages/${diskname}
-
-'
+    source               => 'puppet:///modules/local-openstack/glance_add_image.sh',
   }
   file { '/usr/local/admin/bin/glance_list_images.sh':
     ensure               => 'file',
     mode                 => '0755',
     subscribe            => File['/usr/local/admin/bin'],
-    content              => '#!/bin/sh
-
-. /root/openrc
-
-glance index 
-
-'
+    source               => 'puppet:///modules/local-openstack/glance_list_images.sh',
   }
   file { '/var/spool/stackimages':
     ensure               => 'directory',
