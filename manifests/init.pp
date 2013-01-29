@@ -78,5 +78,13 @@ class local-openstack {
     ensure               => 'directory',
     mode                 => '0755',
   }
+  exec { '/usr/local/admin/bin/glance_add_image.sh https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img  cirros-0.3.0-x86_64-disk.img qcow2 bare':
+    onlyif               => '/usr/local/admin/bin/glance_list_images.sh |grep cirros-0.3.0-x86_64-disk.img |wc -l |grep 0',
+    subscribe            => File['/var/spool/stackimages'],
+  }
+  exec { '/usr/local/admin/bin/glance_add_image.sh http://uec-images.ubuntu.com/precise/current/precise-server-cloudimg-amd64-disk1.img  precise-server-cloudimg-amd64-disk1.img qcow2 bare':
+    onlyif               => '/usr/local/admin/bin/glance_list_images.sh |grep precise-server-cloudimg-amd64-disk1.img |wc -l |grep 0',
+    subscribe            => File['/var/spool/stackimages'],
+  }
 }
 
