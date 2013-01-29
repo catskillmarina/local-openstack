@@ -1,24 +1,12 @@
 class local-openstack {
 
-  File['/etc/apt/sources.list'] ->
-  Exec['apt-get update'] ->
-  Package['python-software-properties'] ->
-  Package['git'] ->
-  Package['lynx'] ->
-  Package['ubuntu-cloud-keyring'] ->
+  Class['local-openstack::prep'] ->
   File['/etc/apache2/'] ->
   File['/etc/apache2/mods-available/'] ->
   File['/etc/apache2/mods-available/wsgi.conf'] ->
-  Package['apache2'] ->
-  Service['apache2']   -> 
   Class['openstack::all']
 
-  package { 'ntfs-3g':
-    ensure            => 'absent',
-  }
-  package { 'python-software-properties':
-    ensure            => 'latest',
-  }
+  class { 'local-openstack::prep': }
   file { '/etc/apache2/':
     ensure               => 'directory',
     owner                => 'root',
@@ -35,33 +23,6 @@ class local-openstack {
     mode                 => '0644',
     source               => 'puppet:///modules/local-openstack/wsgi.conf',
   }
-  package { 'git':
-    ensure            => 'latest',
-  }
-  package { 'lynx':
-    ensure            => 'latest',
-  }
-  package { 'ubuntu-cloud-keyring':
-    ensure            => 'latest',
-  }
-  file { '/etc/apt/sources.list':
-    ensure            => 'file',
-    source            => 'puppet:///modules/local-openstack/sources.list',
-    owner             => 'root',
-    mode              => '0644',
-  }
-  exec {'apt-get update':
-    path              => '/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin',
-    subscribe         => File['/etc/apt/sources.list'],
-    refreshonly       => true,
-  }
-  package { 'apache2':
-    ensure               => 'latest',
-  } 
-  service { 'apache2':
-    ensure               => 'running',
-    subscribe            => Package['apache2'],
-  } 
   class { 'openstack::all':
     public_address       => '10.0.2.15',
     public_interface     => 'eth0',
