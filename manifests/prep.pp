@@ -2,7 +2,7 @@ class local-openstack::prep {
 
   Apt::Key['ubuntu_cloud_archive'] ->
   Apt::Source['ubuntu_cloud_archive'] ->
-  Exec['apt-get update'] -> 
+  Exec['apt-get update'] ->
   Package['python-software-properties'] ->
   Package['git'] ->
   Package['lynx'] ->
@@ -49,10 +49,10 @@ class local-openstack::prep {
   }
   package { 'apache2':
     ensure               => 'latest',
-  } 
+  }
   service { 'apache2':
     ensure               => 'running',
     subscribe            => Package['apache2'],
-  } 
+  }
 }
 
